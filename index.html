@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍅 Pomodoro Timer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            padding: 60px 30px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .points-badge {
+            position: absolute;
+            top: 60px;
+            right: 30px;
+            background: #FF6B6B;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+            z-index: 50;
+        }
+
+        .points-label {
+            font-size: 10px;
+            opacity: 0.9;
+            margin-bottom: 2px;
+        }
+
+        .points-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .tomato-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 60px 0 20px;
+            position: relative;
+        }
+
+        .progress-ring {
+            width: 200px;
+            height: 200px;
+            position: relative;
+        }
+
+        .progress-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: #f0f0f0;
+            stroke-width: 8;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke: #FF6B6B;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 565.48;
+            stroke-dashoffset: 565.48;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .tomato {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: #FF6B6B;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            z-index: 20;
+        }
+
+        .tomato::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 10px;
+            background: #2D5016;
+            border-radius: 10px 10px 0 0;
+            clip-path: polygon(20% 0%, 40% 100%, 60% 100%, 80% 0%);
+        }
+
+        .tomato-face {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .eyes {
+            display: flex;
+            gap: 12px;
+        }
+
+        .eye {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .eye::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            width: 6px;
+            height: 6px;
+            background: #2D5016;
+            border-radius: 50%;
+        }
+
+        .mouth {
+            width: 16px;
+            height: 8px;
+            border: 2px solid white;
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .timer-display {
+            font-size: 3.5rem;
+            font-weight: 300;
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 15;
+        }
+
+        .start-button {
+            width: 200px;
+            height: 50px;
+            background: #FF6B6B;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 auto 30px;
+            display: block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .start-button:active {
+            transform: translateY(0);
+        }
+
+        .settings-link {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .settings-link button {
+            background: none;
+            border: none;
+            color: #4A90E2;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: #FF6B6B;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            border-radius: 0 0 30px 30px;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            padding: 60px 30px 120px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-panel.active {
+            transform: translateX(0);
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            margin-right: 20px;
+            color: #4A90E2;
+        }
+
+        .settings-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .setting-group {
+            margin-bottom: 30px;
+        }
+
+        .setting-label {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .setting-input {
+            width: 100%;
+            height: 50px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 0 15px;
+            font-size: 16px;
+            background: white;
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: #FF6B6B;
+        }
+
+        .session-info {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FF6B6B;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 400px) {
+            .phone-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                padding: 60px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="points-badge">
+            <div class="points-label">Points</div>
+            <div class="points-value" id="pointsValue">120</div>
+        </div>
+        
+        <div class="session-info" id="sessionInfo">
+            Focus Session
+        </div>
+        
+        <div class="tomato-container">
+            <div class="progress-ring">
+                <svg>
+                    <circle class="progress-ring-bg" cx="100" cy="100" r="90"></circle>
+                    <circle class="progress-ring-fill" cx="100" cy="100" r="90" id="progressRing"></circle>
+                </svg>
+                <div class="tomato">
+                    <div class="tomato-face">
+                        <div class="eyes">
+                            <div class="eye"></div>
+                            <div class="eye"></div>
+                        </div>
+                        <div class="mouth"></div>
+                    </div>
+                </div>
+                <div class="timer-display" id="timerDisplay">
+                    25:00
+                </div>
+            </div>
+        </div>
+        
+        <button class="start-button" id="startPauseBtn">Start</button>
+        
+        <div class="settings-link">
+            <button id="settingsBtn">⚙️ Settings</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-number" id="completedSessions">0</span>
+                <div class="stat-label">Sessions</div>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="totalTime">0h 0m</span>
+                <div class="stat-label">Focus Time</div>
+            </div>
+        </div>
+        
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <div class="nav-icon">📊</div>
+                <span>timeline</span>
+            </div>
+            <div class="nav-item active">
+                <div class="nav-icon">⏰</div>
+                <span>timer</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">🌱</div>
+                <span>garden</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">🚫</div>
+                <span>blacklist</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📈</div>
+                <span>usage</span>
+            </div>
+        </div>
+        
+        <div class="settings-panel" id="settingsPanel">
+            <div class="settings-header">
+                <button class="back-button" id="backBtn">← Back</button>
+                <h2 class="settings-title">Settings</h2>
+            </div>
+            
+            <div class="setting-group">
+                <label class="setting-label">Focus Time (minutes)</label>
+                <input type="number" class="setting-input" id="focusTime" value="25" min="1" max="60">
+            </div>
+            <div class="setting-group">
+                <label class="setting-label">Short Break (minutes)</label>
+                <input type="number" class="setting-input" id="shortBreak" value="5" min="1" max="30">
+            </div>
+            <div class="setting-group">
+                <label class="setting-label">Long Break (minutes)</label>
+                <input type="number" class="setting-input" id="longBreak" value="15" min="5" max="60">
+            </div>
+            
+            <button class="start-button" id="resetBtn" style="background: #666; margin-top: 30px;">Reset All Stats</button>
+        </div>
+    </div>
+
+    <script>
+        class PomodoroTimer {
+            constructor() {
+                this.isRunning = false;
+                this.currentSession = 'focus';
+                this.sessionsCompleted = 0;
+                this.totalFocusTime = 0;
+                this.timeLeft = 25 * 60; // 25 minutes in seconds
+                this.totalTime = 25 * 60;
+                this.timer = null;
+                
+                this.settings = {
+                    focusTime: 25,
+                    shortBreak: 5,
+                    longBreak: 15
+                };
+                
+                this.initializeElements();
+                this.loadSettings();
+                this.bindEvents();
+                this.updateDisplay();
+                this.createAudioContext();
+            }
+            
+            initializeElements() {
+                this.timerDisplay = document.getElementById('timerDisplay');
+                this.sessionInfo = document.getElementById('sessionInfo');
+                this.startPauseBtn = document.getElementById('startPauseBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.settingsBtn = document.getElementById('settingsBtn');
+                this.settingsPanel = document.getElementById('settingsPanel');
+                this.backBtn = document.getElementById('backBtn');
+                this.progressRing = document.getElementById('progressRing');
+                this.completedSessionsEl = document.getElementById('completedSessions');
+                this.totalTimeEl = document.getElementById('totalTime');
+                this.pointsEl = document.getElementById('pointsValue');
+                
+                this.focusTimeInput = document.getElementById('focusTime');
+                this.shortBreakInput = document.getElementById('shortBreak');
+                this.longBreakInput = document.getElementById('longBreak');
+            }
+            
+            createAudioContext() {
+                // Create a simple beep sound using Web Audio API
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            playNotification() {
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.1, this.audioContext.currentTime + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.5);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.5);
+            }
+            
+            bindEvents() {
+                this.startPauseBtn.addEventListener('click', () => this.toggleTimer());
+                this.resetBtn.addEventListener('click', () => this.resetAllStats());
+                this.settingsBtn.addEventListener('click', () => this.showSettings());
+                this.backBtn.addEventListener('click', () => this.hideSettings());
+                
+                // Settings inputs
+                this.focusTimeInput.addEventListener('change', () => this.updateSettings());
+                this.shortBreakInput.addEventListener('change', () => this.updateSettings());
+                this.longBreakInput.addEventListener('change', () => this.updateSettings());
+            }
+            
+            toggleTimer() {
+                if (this.isRunning) {
+                    this.pauseTimer();
+                } else {
+                    this.startTimer();
+                }
+            }
+            
+            startTimer() {
+                this.isRunning = true;
+                this.startPauseBtn.textContent = 'Pause';
+                
+                this.timer = setInterval(() => {
+                    this.timeLeft--;
+                    this.updateDisplay();
+                    this.updateProgressRing();
+                    
+                    if (this.timeLeft <= 0) {
+                        this.completeSession();
+                    }
+                }, 1000);
+            }
+            
+            pauseTimer() {
+                this.isRunning = false;
+                this.startPauseBtn.textContent = 'Start';
+                clearInterval(this.timer);
+            }
+            
+            resetTimer() {
+                this.pauseTimer();
+                this.currentSession = 'focus';
+                this.timeLeft = this.settings.focusTime * 60;
+                this.totalTime = this.settings.focusTime * 60;
+                this.updateDisplay();
+                this.updateProgressRing();
+                this.updateSessionInfo();
+            }
+            
+            resetAllStats() {
+                if (confirm('Are you sure you want to reset all statistics? This cannot be undone.')) {
+                    this.sessionsCompleted = 0;
+                    this.totalFocusTime = 0;
+                    this.updateStats();
+                    this.resetTimer();
+                }
+            }
+            
+            completeSession() {
+                this.pauseTimer();
+                this.playNotification();
+                
+                if (this.currentSession === 'focus') {
+                    this.sessionsCompleted++;
+                    this.totalFocusTime += this.settings.focusTime;
+                    this.updateStats();
+                    
+                    // Determine next session type
+                    if (this.sessionsCompleted % 4 === 0) {
+                        this.currentSession = 'longBreak';
+                        this.timeLeft = this.settings.longBreak * 60;
+                        this.totalTime = this.settings.longBreak * 60;
+                    } else {
+                        this.currentSession = 'shortBreak';
+                        this.timeLeft = this.settings.shortBreak * 60;
+                        this.totalTime = this.settings.shortBreak * 60;
+                    }
+                } else {
+                    // Break completed, start focus session
+                    this.currentSession = 'focus';
+                    this.timeLeft = this.settings.focusTime * 60;
+                    this.totalTime = this.settings.focusTime * 60;
+                }
+                
+                this.updateDisplay();
+                this.updateProgressRing();
+                this.updateSessionInfo();
+                
+                // Auto-start next session after a brief pause
+                setTimeout(() => {
+                    if (confirm(`${this.getSessionName()} completed! Start ${this.getSessionName()}?`)) {
+                        this.startTimer();
+                    }
+                }, 1000);
+            }
+            
+            getSessionName() {
+                switch (this.currentSession) {
+                    case 'focus': return 'Focus Session';
+                    case 'shortBreak': return 'Short Break';
+                    case 'longBreak': return 'Long Break';
+                    default: return 'Session';
+                }
+            }
+            
+            updateDisplay() {
+                const minutes = Math.floor(this.timeLeft / 60);
+                const seconds = this.timeLeft % 60;
+                this.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            updateProgressRing() {
+                const progress = ((this.totalTime - this.timeLeft) / this.totalTime) * 100;
+                const circumference = 2 * Math.PI * 90; // radius is 90
+                const strokeDashoffset = circumference - (progress / 100) * circumference;
+                this.progressRing.style.strokeDashoffset = strokeDashoffset;
+            }
+            
+            updateSessionInfo() {
+                this.sessionInfo.textContent = this.getSessionName();
+            }
+            
+            updateStats() {
+                this.completedSessionsEl.textContent = this.sessionsCompleted;
+                
+                const hours = Math.floor(this.totalFocusTime / 60);
+                const minutes = this.totalFocusTime % 60;
+                this.totalTimeEl.textContent = `${hours}h ${minutes}m`;
+                
+                // Update points (5 points per completed session)
+                const points = this.sessionsCompleted * 5;
+                this.pointsEl.textContent = points;
+                
+                this.saveStats();
+            }
+            
+            showSettings() {
+                this.settingsPanel.classList.add('active');
+            }
+            
+            hideSettings() {
+                this.settingsPanel.classList.remove('active');
+            }
+            
+            updateSettings() {
+                this.settings.focusTime = parseInt(this.focusTimeInput.value);
+                this.settings.shortBreak = parseInt(this.shortBreakInput.value);
+                this.settings.longBreak = parseInt(this.longBreakInput.value);
+                
+                if (this.currentSession === 'focus' && !this.isRunning) {
+                    this.timeLeft = this.settings.focusTime * 60;
+                    this.totalTime = this.settings.focusTime * 60;
+                    this.updateDisplay();
+                    this.updateProgressRing();
+                }
+                
+                this.saveSettings();
+            }
+            
+            saveSettings() {
+                localStorage.setItem('pomodoroSettings', JSON.stringify(this.settings));
+            }
+            
+            loadSettings() {
+                const saved = localStorage.getItem('pomodoroSettings');
+                if (saved) {
+                    this.settings = { ...this.settings, ...JSON.parse(saved) };
+                    this.focusTimeInput.value = this.settings.focusTime;
+                    this.shortBreakInput.value = this.settings.shortBreak;
+                    this.longBreakInput.value = this.settings.longBreak;
+                }
+            }
+            
+            saveStats() {
+                localStorage.setItem('pomodoroStats', JSON.stringify({
+                    sessionsCompleted: this.sessionsCompleted,
+                    totalFocusTime: this.totalFocusTime
+                }));
+            }
+            
+            loadStats() {
+                const saved = localStorage.getItem('pomodoroStats');
+                if (saved) {
+                    const stats = JSON.parse(saved);
+                    this.sessionsCompleted = stats.sessionsCompleted || 0;
+                    this.totalFocusTime = stats.totalFocusTime || 0;
+                    this.updateStats();
+                }
+            }
+        }
+        
+        // Initialize the timer when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const timer = new PomodoroTimer();
+            timer.loadStats();
+        });
+    </script>
+</body>
+</html> 
