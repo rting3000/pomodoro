@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anna Lindqvist — Design Portfolio</title>
+<meta name="description" content="Anna Lindqvist — product &amp; spatial designer working between Copenhagen and Kyoto.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #f3efe6;
+    --paper-deep: #eae2d3;
+    --ink: #211d18;
+    --ink-soft: #55503f;
+    --brown: #8a6e55;
+    --brown-deep: #5b4632;
+    --gray: #8d897c;
+    --line: #d8cfba;
+    --white: #fffdf8;
+
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+
+    --max: 1180px;
+    --edge: clamp(24px, 6vw, 96px);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* subtle paper grain */
+  body::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .5;
+    z-index: 999;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  a{ color: inherit; text-decoration:none; }
+  ul{ list-style:none; }
+  img{ max-width:100%; display:block; }
+
+  .container{ max-width: var(--max); margin:0 auto; padding-left: var(--edge); padding-right: var(--edge); }
+
+  ::selection{ background: var(--brown); color: var(--white); }
+
+  /* ---------- reveal-on-scroll ---------- */
+  .reveal{
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.9s cubic-bezier(.16,.8,.24,1), transform 0.9s cubic-bezier(.16,.8,.24,1);
+  }
+  .reveal.is-visible{ opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  /* ---------- nav ---------- */
+  .nav{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px var(--edge);
+    background: linear-gradient(var(--paper) 60%, transparent);
+    backdrop-filter: blur(2px);
+  }
+  .nav.is-scrolled{
+    background: rgba(243,239,230,.86);
+    border-bottom: 1px solid var(--line);
+  }
+  .mark{
+    font-family: var(--serif);
+    font-size: 20px;
+    letter-spacing: .02em;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .mark .dot{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--brown);
+    display:inline-block;
+  }
+  .nav-links{ display:flex; gap: clamp(18px,3vw,40px); }
+  .nav-links a{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    position: relative;
+    padding-bottom: 3px;
+  }
+  .nav-links a::after{
+    content:"";
+    position:absolute; left:0; bottom:0;
+    width:100%; height:1px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform .45s cubic-bezier(.16,.8,.24,1);
+  }
+  .nav-links a:hover::after{ transform: scaleX(1); transform-origin: left; }
+  .nav-links a:hover{ color: var(--ink); }
+  .nav-toggle{ display:none; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height: 100svh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position: relative;
+    padding-top: 90px;
+  }
+  .hero .eyebrow{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--brown-deep);
+    margin-bottom: 22px;
+    display:flex;
+    align-items:center;
+    gap: 12px;
+  }
+  .hero .eyebrow::before{
+    content:"";
+    width: 34px; height:1px;
+    background: var(--brown-deep);
+  }
+  .hero h1{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(52px, 9vw, 132px);
+    line-height: .96;
+    letter-spacing: -.01em;
+    max-width: 16ch;
+  }
+  .hero h1 em{
+    font-style: italic;
+    font-weight: 300;
+    color: var(--brown-deep);
+  }
+  .hero .lede{
+    margin-top: 34px;
+    max-width: 44ch;
+    font-size: clamp(16px, 1.7vw, 19px);
+    color: var(--ink-soft);
+  }
+  .hero .lede strong{ color: var(--ink); font-weight:500; }
+
+  .enso{
+    position: absolute;
+    top: 12%;
+    right: var(--edge);
+    width: clamp(120px, 16vw, 220px);
+    height: clamp(120px, 16vw, 220px);
+    opacity: .9;
+  }
+  .enso circle{
+    fill:none;
+    stroke: var(--brown);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-dasharray: 610;
+    stroke-dashoffset: 610;
+    animation: draw 2.6s cubic-bezier(.65,0,.35,1) .3s forwards;
+  }
+  @keyframes draw{ to{ stroke-dashoffset: 40; } }
+
+  .scroll-cue{
+    position:absolute;
+    bottom: 44px;
+    left: var(--edge);
+    display:flex;
+    align-items:center;
+    gap:14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color: var(--gray);
+  }
+  .scroll-cue .line{
+    width:1px; height: 46px;
+    background: var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .scroll-cue .line::after{
+    content:"";
+    position:absolute;
+    top:-100%; left:0;
+    width:100%; height:100%;
+    background: var(--ink);
+    animation: cue 2.2s ease-in-out infinite;
+  }
+  @keyframes cue{
+    0%{ top:-100%; }
+    50%{ top: 100%; }
+    50.01%{ top:-100%; }
+    100%{ top:-100%; }
+  }
+
+  /* ---------- section shell ---------- */
+  section{ padding: clamp(90px, 12vw, 160px) 0; position:relative; }
+  .section-head{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: clamp(48px, 8vw, 88px);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 22px;
+  }
+  .section-head .label{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--brown-deep);
+  }
+  .section-head h2{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(28px, 3.4vw, 44px);
+  }
+
+  /* ---------- about ---------- */
+  .about-grid{
+    display: grid;
+    grid-template-columns: .8fr 1.2fr;
+    gap: clamp(40px, 6vw, 100px);
+  }
+  .about-grid p{
+    font-size: clamp(17px, 1.6vw, 21px);
+    color: var(--ink-soft);
+    max-width: 56ch;
+  }
+  .about-grid p + p{ margin-top: 20px; }
+  .about-grid strong{ color: var(--ink); font-weight: 500; }
+
+  .stats{
+    margin-top: 56px;
+    display:flex;
+    gap: clamp(32px, 6vw, 72px);
+    flex-wrap: wrap;
+  }
+  .stat .num{
+    font-family: var(--serif);
+    font-size: clamp(34px, 4vw, 48px);
+    color: var(--brown-deep);
+  }
+  .stat .cap{
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  .principles{ display:flex; flex-direction:column; gap: 28px; }
+  .principle{
+    display:grid;
+    grid-template-columns: 48px 1fr;
+    gap: 18px;
+    padding-top: 26px;
+    border-top: 1px solid var(--line);
+  }
+  .principle:first-child{ border-top:none; padding-top:0; }
+  .principle .idx{ font-family: var(--mono); font-size:12px; color: var(--gray); }
+  .principle h3{ font-family: var(--serif); font-weight:400; font-size: 20px; margin-bottom:6px; }
+  .principle p{ color: var(--ink-soft); font-size: 15px; max-width: 48ch; }
+
+  /* ---------- work ---------- */
+  .work-list{ display:flex; flex-direction:column; }
+  .work-row{
+    display:grid;
+    grid-template-columns: 56px 1fr auto auto;
+    align-items: center;
+    gap: 20px;
+    padding: 30px 0;
+    border-top: 1px solid var(--line);
+    position: relative;
+    cursor: pointer;
+  }
+  .work-list .work-row:last-child{ border-bottom: 1px solid var(--line); }
+  .work-row .idx{ font-family: var(--mono); font-size:13px; color: var(--gray); }
+  .work-row .title{
+    font-family: var(--serif);
+    font-size: clamp(24px, 3.4vw, 40px);
+    font-weight: 400;
+    transition: transform .5s cubic-bezier(.16,.8,.24,1), color .4s ease;
+  }
+  .work-row .tags{
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing:.08em;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-align:right;
+    display:none;
+  }
+  .work-row .year{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--brown-deep);
+  }
+  .work-row::before{
+    content:"";
+    position:absolute;
+    left:0; bottom:-1px;
+    width:0%; height:1px;
+    background: var(--ink);
+    transition: width .5s cubic-bezier(.16,.8,.24,1);
+  }
+  .work-row:hover::before{ width:100%; }
+  .work-row:hover .title{ transform: translateX(14px); color: var(--brown-deep); }
+
+  @media (min-width: 720px){
+    .work-row{ grid-template-columns: 56px 1fr auto auto; }
+    .work-row .tags{ display:block; }
+  }
+
+  /* ---------- philosophy / quote band ---------- */
+  .quote-band{
+    background: var(--ink);
+    color: var(--paper);
+    padding: clamp(90px, 14vw, 160px) 0;
+  }
+  .quote-band blockquote{
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(26px, 4.2vw, 52px);
+    line-height: 1.35;
+    max-width: 20ch;
+  }
+  .quote-band .attrib{
+    margin-top: 34px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing:.1em;
+    text-transform: uppercase;
+    color: #b7ab97;
+  }
+
+  /* ---------- contact ---------- */
+  .contact-inner{ text-align:left; }
+  .contact h2.big{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(40px, 8vw, 100px);
+    line-height: 1;
+    max-width: 14ch;
+  }
+  .email-link{
+    display:inline-block;
+    margin-top: 40px;
+    font-family: var(--serif);
+    font-size: clamp(28px, 5vw, 56px);
+    font-style: italic;
+    position: relative;
+    color: var(--brown-deep);
+  }
+  .email-link::after{
+    content:"";
+    position:absolute; left:0; bottom:-6px;
+    width:100%; height:1px;
+    background: currentColor;
+    transform: scaleX(.15);
+    transform-origin:left;
+    transition: transform .5s cubic-bezier(.16,.8,.24,1);
+  }
+  .email-link:hover::after{ transform: scaleX(1); }
+
+  .contact-meta{
+    margin-top: 70px;
+    display:flex;
+    justify-content: space-between;
+    align-items:flex-end;
+    flex-wrap: wrap;
+    gap: 30px;
+    border-top: 1px solid var(--line);
+    padding-top: 30px;
+  }
+  .social-links{ display:flex; gap: 30px; }
+  .social-links a{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing:.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    position: relative;
+  }
+  .social-links a:hover{ color: var(--ink); }
+  .footnote{
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: .06em;
+  }
+
+  @media (max-width: 720px){
+    .about-grid{ grid-template-columns: 1fr; }
+    .work-row{ grid-template-columns: 40px 1fr auto; }
+    .section-head{ flex-direction: column; align-items: flex-start; gap: 10px; }
+  }
+
+  @media (max-width: 560px){
+    .nav{ padding: 20px var(--edge); }
+    .mark{ font-size: 17px; }
+    .nav-links{ gap: 14px; }
+    .nav-links a{ font-size: 10px; }
+  }
+
+  .mark .short{ display:none; }
+
+  @media (max-width: 420px){
+    .mark .full{ display:none; }
+    .mark .short{ display:inline; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav" id="siteNav">
+  <a href="#top" class="mark"><span class="dot"></span><span class="full">Anna Lindqvist</span><span class="short">AL</span></a>
+  <nav class="nav-links">
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#philosophy">Approach</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="hero" id="top">
+    <div class="container">
+      <p class="eyebrow">Portfolio — Copenhagen / Kyoto</p>
+      <h1>Design, held <em>gently</em>,<br>made to last.</h1>
+      <p class="lede">I'm <strong>Anna Lindqvist</strong>, a product &amp; spatial designer working
+        at the quiet overlap of Scandinavian function and Japanese restraint —
+        fewer things, made with more care.</p>
+    </div>
+    <svg class="enso" viewBox="0 0 220 220" aria-hidden="true">
+      <circle cx="110" cy="110" r="97"></circle>
+    </svg>
+    <div class="scroll-cue"><span class="line"></span>Scroll</div>
+  </section>
+
+  <section id="about">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="label">01 — About</span>
+        <h2>A practice built on restraint.</h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="reveal">
+          <p>Ten years ago I traded a career in industrial design for something
+            slower. I now split my time between a small studio in
+            Copenhagen and a workshop outside Kyoto, and most projects begin
+            the same way — by asking what can be <strong>removed</strong>,
+            not added.</p>
+          <p>The work that follows sits between two traditions that, to me,
+            were always saying the same thing: hygge's honest materials,
+            and wabi-sabi's comfort with the imperfect and unfinished.</p>
+
+          <div class="stats">
+            <div class="stat"><div class="num" data-count="11">0</div><div class="cap">Years in practice</div></div>
+            <div class="stat"><div class="num" data-count="46">0</div><div class="cap">Projects shipped</div></div>
+            <div class="stat"><div class="num" data-count="2">0</div><div class="cap">Studios</div></div>
+          </div>
+        </div>
+
+        <div class="principles reveal">
+          <div class="principle">
+            <span class="idx">01</span>
+            <div><h3>Function first</h3><p>Every form earns its place by what it does before what it shows.</p></div>
+          </div>
+          <div class="principle">
+            <span class="idx">02</span>
+            <div><h3>Negative space</h3><p>What's left empty carries as much weight as what's placed.</p></div>
+          </div>
+          <div class="principle">
+            <span class="idx">03</span>
+            <div><h3>Honest materials</h3><p>Wood stays wood, paper stays paper — no material pretends to be another.</p></div>
+          </div>
+          <div class="principle">
+            <span class="idx">04</span>
+            <div><h3>Made to age well</h3><p>Good design gets quieter and more comfortable with time, not louder.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="label">02 — Selected Work</span>
+        <h2>A short, considered list.</h2>
+      </div>
+
+      <div class="work-list reveal">
+        <div class="work-row">
+          <span class="idx">01</span>
+          <span class="title">Nordic Table</span>
+          <span class="tags">Furniture · Identity</span>
+          <span class="year">2024</span>
+        </div>
+        <div class="work-row">
+          <span class="idx">02</span>
+          <span class="title">Kiln Studio</span>
+          <span class="tags">Interior · Signage</span>
+          <span class="year">2023</span>
+        </div>
+        <div class="work-row">
+          <span class="idx">03</span>
+          <span class="title">Quiet Hours</span>
+          <span class="tags">Product · App</span>
+          <span class="year">2022</span>
+        </div>
+        <div class="work-row">
+          <span class="idx">04</span>
+          <span class="title">Paper &amp; Pine</span>
+          <span class="tags">Packaging · Print</span>
+          <span class="year">2021</span>
+        </div>
+        <div class="work-row">
+          <span class="idx">05</span>
+          <span class="title">Engawa House</span>
+          <span class="tags">Architecture</span>
+          <span class="year">2020</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="philosophy" class="quote-band">
+    <div class="container">
+      <blockquote class="reveal">"The best object in the room is the one you stop noticing — because it finally fits."</blockquote>
+      <p class="attrib reveal">— On designing without ornament</p>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="container contact-inner">
+      <div class="reveal">
+        <span class="label" style="font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--brown-deep);">03 — Contact</span>
+        <h2 class="big" style="margin-top:22px;">Let's make<br>something quiet.</h2>
+        <a href="mailto:hello@annalindqvist.studio" class="email-link" id="magnetic">hello@annalindqvist.studio</a>
+      </div>
+
+      <div class="contact-meta reveal">
+        <div class="social-links">
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">Are.na</a>
+        </div>
+        <span class="footnote">© 2026 Anna Lindqvist Studio — Copenhagen &amp; Kyoto</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // nav background on scroll
+  const nav = document.getElementById('siteNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('is-scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  // scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => io.observe(el));
+
+  // count-up stats
+  const counters = document.querySelectorAll('.stat .num');
+  const cio = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const target = parseInt(el.dataset.count, 10);
+      const duration = 1200;
+      const start = performance.now();
+      function tick(now){
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(eased * target);
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      cio.unobserve(el);
+    });
+  }, { threshold: 0.6 });
+  counters.forEach(el => cio.observe(el));
+
+  // magnetic email link
+  const magnetic = document.getElementById('magnetic');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (magnetic && !reduceMotion) {
+    magnetic.addEventListener('mousemove', (e) => {
+      const r = magnetic.getBoundingClientRect();
+      const x = (e.clientX - r.left - r.width / 2) * 0.18;
+      const y = (e.clientY - r.top - r.height / 2) * 0.3;
+      magnetic.style.transform = `translate(${x}px, ${y}px)`;
+    });
+    magnetic.addEventListener('mouseleave', () => {
+      magnetic.style.transform = 'translate(0, 0)';
+    });
+  }
+</script>
+
+</body>
+</html>
